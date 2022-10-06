@@ -31,5 +31,6 @@ if __name__ == "__main__":
     main()
 ```
 
-![Результат 1](![image](https://user-images.githubusercontent.com/77213122/194323448-3599ba00-c346-401b-a1d1-efaeeff0a698.png)
-)
+![Результат 1](https://user-images.githubusercontent.com/77213122/194324064-dab9ecd8-5f0e-4e4c-b4f2-9d1b3debc2d3.png)
+
+
