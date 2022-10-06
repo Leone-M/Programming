@@ -35,6 +35,24 @@ if __name__ == "__main__":
 ![Результат 2](https://user-images.githubusercontent.com/77213122/194324963-c40cc0a7-e2e8-41dc-85cb-5fe1363f2476.png)
 ![Результат 3](https://user-images.githubusercontent.com/77213122/194325172-62f9ff01-272f-4e72-b721-a4ac0ec73673.png)
 
+### Второе задание:
+
+```Python
+def main():
+    stroka = str(input()).split()
+    stroka = stroka[::-1]
+    for i in range(len(stroka)):
+        stroka[i] = stroka[i].lower()
+    stroka[0] = stroka[0].capitalize()
+    print(" ".join(stroka))
+
+if __name__ == "__main__":
+    main()
+```
+
+![Result 1](https://user-images.githubusercontent.com/77213122/194328371-9ab59ac7-9fa3-4cf8-badc-c47d2f160cdb.png)
+![Result 2](https://user-images.githubusercontent.com/77213122/194328559-b608c28c-ca09-47c5-907c-cd486ab7e799.png)
+![Result 3](https://user-images.githubusercontent.com/77213122/194328639-0f8cc29e-1855-44c2-af04-7b3c43aa724c.png)
 
 
 
