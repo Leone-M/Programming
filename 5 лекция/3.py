@@ -36,7 +36,7 @@ def main():
             maxx = 0
             podstroka = ""
 
-        if len(podstroka) > maxx:
+        if len(podstroka) > maxx and len(podstroka) != 1:
             maxx += 1
             max_podstroka = podstroka
 
