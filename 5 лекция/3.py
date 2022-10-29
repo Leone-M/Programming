@@ -33,7 +33,6 @@ def main():
             allow_1 = 0
             allow_2 = 0
             allow_3 = 0
-            maxx = 0
             podstroka = ""
 
         if len(podstroka) > maxx and len(podstroka) != 1:
@@ -41,6 +40,18 @@ def main():
             max_podstroka = podstroka
 
         i += 1
+
+    if max_podstroka.count("(") != max_podstroka.count(")"):
+        index = max_podstroka.rfind("(")
+        max_podstroka = max_podstroka[:index - 1]
+
+    if max_podstroka.count("[") != max_podstroka.count("]"):
+        index = max_podstroka.rfind("[")
+        max_podstroka = max_podstroka[:index - 1]
+
+    if max_podstroka.count("{") != max_podstroka.count("}"):
+        index = max_podstroka.rfind("{")
+        max_podstroka = max_podstroka[:index - 1]
 
     if max_podstroka == stroka:
         print(True)
