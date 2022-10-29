@@ -113,6 +113,18 @@ def main():
 
         i += 1
 
+    if max_podstroka.count("(") != max_podstroka.count(")"):
+        index = max_podstroka.rfind("(")
+        max_podstroka = max_podstroka[:index - 1]
+
+    if max_podstroka.count("[") != max_podstroka.count("]"):
+        index = max_podstroka.rfind("[")
+        max_podstroka = max_podstroka[:index - 1]
+
+    if max_podstroka.count("{") != max_podstroka.count("}"):
+        index = max_podstroka.rfind("{")
+        max_podstroka = max_podstroka[:index - 1]
+
     if max_podstroka == stroka:
         print(True)
     elif max_podstroka != "":
@@ -122,6 +134,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 ```
 ![image](https://user-images.githubusercontent.com/77213122/197355387-a5943b84-9786-4d77-a237-d5e599a725c2.png)
 ![image](https://user-images.githubusercontent.com/77213122/197355500-37729460-fbb6-4aa7-b1dd-ae8cb3038559.png)
