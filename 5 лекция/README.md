@@ -105,7 +105,6 @@ def main():
             allow_1 = 0
             allow_2 = 0
             allow_3 = 0
-            maxx = 0
             podstroka = ""
 
         if len(podstroka) > maxx and len(podstroka) != 1:
