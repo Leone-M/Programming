@@ -15,7 +15,8 @@ def main():
     mx = 0
     cur = 0
 
-    for i in range(0, len(stringprep)):
+    i = 0
+    while i != len(stringprep):
         if not (stringprep[i] in buf):
             buf.append(stringprep[i])
             cur += 1
@@ -25,8 +26,11 @@ def main():
                     stringfinal += e
                 mx = cur
         else:
+            i = i - cur
             buf = []
             cur = 0
+        
+        i += 1
 
     print(stringfinal)
 
