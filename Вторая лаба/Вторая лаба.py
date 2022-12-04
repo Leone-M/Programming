@@ -114,5 +114,6 @@ def main():
     recursion(0, matrix, 0, 0, int(lines[0][1]), output)
 
     file.close() # Обязательно
+    output.close()
 if __name__ == "__main__":
     main()
