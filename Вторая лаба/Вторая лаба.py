@@ -1,119 +1,125 @@
 import copy
+import time
 
+start = time.time()
 
-def main():
-    file = open("input.txt", "r", encoding="utf-8")
+def ultra_mega_king_dragon_figure(x, y, desk):
+    # добавляю по вертикали
+    table = copy.deepcopy(desk)
+    for i in range(len(table)):
+        table[i][x] = "*"
+    # добавляю по горизонтали
+    for i in range(len(table)):
+        table[y][i] = "*"
+    # ячейка слева
+    if x > 0:
+        table[y][x - 1] = "*"
+        # ячейка справа
+    if x < len(table) - 1:
+        table[y][x + 1] = "*"
+    # ячейка сверху
+    if y > 0:
+        table[y - 1][x] = "*"
+    # ячейка снизу
+    if y < len(table) - 1:
+        table[y + 1][x] = "*"
+    # слева-сверху
+    if y > 0 and x > 0:
+        table[y - 1][x - 1] = "*"
+    # справа-сверху
+    if y > 0 and x < len(table) - 1:
+        table[y - 1][x + 1] = "*"
+    # слева-снизу
+    if y < len(table) - 1 and x > 0:
+        table[y + 1][x - 1] = "*"
+    # справа-снизу
+    if y < len(table) - 1 and x < len(table) - 1:
+        table[y + 1][x + 1] = "*"
+    table[y][x] = "#"
+    return table
 
-    output = open("output.txt", "r+", encoding="utf-8")
+"""for e in matrix:
+    print(e)"""
 
-    lines = file.readlines() # считали строки
-    lines = [e.strip("\n" ).split(" ") for e in lines] # Сформатировали строки
+output = open("output.txt", mode="w+", encoding="utf-8")
+inpt = open("input.txt", mode="r+", encoding="utf-8")
 
-    matrix_size = int(lines[0][0])
-    matrix = []
+lines = inpt.readlines() # считали строки
+lines = [e.strip("\n" ).split(" ") for e in lines] # Сформатировали строки
 
-    for i in range(matrix_size): # Создаю пустую доску
-        matrix.append(list())
-        for _ in range(matrix_size):
-            matrix[i].append("0")
+figures = []
+s = int(lines[0][0]) # размечикс
+c = int(lines[0][1]) # скок надо поставить
+for e in lines[1:]:
+    figures.append((int(e[0]), int(e[1])))
+matrix = [["0" for _ in range(s)] for _ in range(s)]
 
+for e in figures:
+    matrix = ultra_mega_king_dragon_figure(e[0], e[1], matrix)
 
-    print(lines)
-    # for e in matrix: # Распечатываем начальную матрицу
-    #     print(e)
-
-    def ultra_mega_king_dragon_figure(x, y, table):
-        if table[y][x] == "0":
-            able_to = True
+inpt.close()
+def rec(desk: list, figur_lst: list, n, x_now, y_now):
+    if n == 0:
+        for e in figur_lst:
+            output.write(str(e) + " ")
+        output.write("\n")
+        return
+    new_figurs = list()
+    i = y_now
+    j = x_now
+    while True:
+        if i == len(desk)-1 and j == len(desk)-1:
+            break
+        if j == len(desk)-1:
+            i += 1
+            j = 0
         else:
-            able_to = False
+            j += 1
+        ability = True
+        for e in figur_lst:
+            if (j == e[0] or i == e[1]) or (abs(j - e[0]) <= 1 and abs(i - e[1]) <= 1):
+                ability = False
+        if ability:
+            new_figurs.append(tuple([j, i]))
 
-        if able_to:
-            # добавляю по вертикали
-            for i in range(len(table)):
-                table[i][x] = "*"
-            # добавляю по горизонтали
-            for i in range(len(table)):
-                table[y][i] = "*"
-            # ячейка слева
-            if x > 0:
-                table[y][x-1] = "*"
-            # ячейка справа
-            if x < len(table)-1:
-                table[y][x+1] = "*"
-            # ячейка сверху
-            if y > 0:
-                table[y-1][x] = "*"
-            # ячейка снизу
-            if y < len(table)-1:
-                table[y+1][x] = "*"
-            # слева-сверху
-            if y > 0 and x > 0:
-                table[y-1][x-1] = "*"
-            # справа-сверху
-            if y > 0 and x < len(table)-1:
-                table[y-1][x+1] = "*"
-            # слева-снизу
-            if y < len(table)-1 and x > 0:
-                table[y+1][x-1] = "*"
-            # справа-снизу
-            if y < len(table)-1 and x < len(table)-1:
-                table[y+1][x+1] = "*"
-            table[y][x] = "#"
-            return True
-        else:
-            return False
+        """   for i in range(len(desk)):
+        for j in range(len(desk)):
+            ability = True
+            for e in figur_lst:
+                if (j == e[0] or i == e[1]) or (abs(j - e[0]) <= 1 and abs(i - e[1]) <= 1):
+                    ability = False
+            if ability:
+                new_figurs.append(tuple([j, i]))"""
 
-    for i in range(1, int(lines[0][2]) + 1):  # Раставляем данные фигуры
-        ultra_mega_king_dragon_figure(int(lines[i][0]), int(lines[i][1]), matrix)
+    for e in new_figurs:
+        rec(desk, figur_lst + [e], n - 1, e[0], e[1])
 
-    def recursion(n, table, x_now, y_now, c, out):
-        if n == c:
-            while True:
-                my_table = copy.deepcopy(table)
-                if x_now == len(table) and y_now == len(table) - 1:
-                    break
-                if x_now == len(table):
-                    y_now += 1
-                    x_now = 0
-                ultra_mega_king_dragon_figure(x_now, y_now, my_table)
-                x_now += 1
+rec(matrix, figures, c, 0, 0)
+output.close()
+output = open("output.txt", mode="r+", encoding="utf-8")
 
-            print("\n")
-            for e in my_table:
-                print(e)
+lines = output.readlines()
+output.close()
+output = open("output.txt", mode="w+", encoding="utf-8")
+for i in range(len(lines)):
+        lines[i] = lines[i][:-2]
+        output.write(lines[i] + "\n")
 
-            figures = []
-            for i in range(len(my_table)):
-                for j in range(len(my_table)):
-                    if my_table[i][j] == "#":
-                        figures.append(tuple([j,i]))
+output = open("output.txt", mode="r+", encoding="utf-8")
 
-            otv = ""
-            for e in figures:
-                otv += str(e)
-                otv += " "
-            otv.strip()
+lines = output.readline().replace("(", "").replace(")", "").replace(",", "").split(" ") # считали строки
+#lines.pop(-1)
+print(lines)
 
-            out.write(otv + "\n")
+matrix_to = [["0" for _ in range(s)] for _ in range(s)]
+for i in range(0, len(lines), 2):
+    matrix_to = ultra_mega_king_dragon_figure(int(lines[i]), int(lines[i+1]), matrix_to)
 
-        while True:
-            my_table = copy.deepcopy(table)
-            if x_now == len(table) and y_now == len(table)-1:
-                break
-            if x_now == len(table):
-                y_now += 1
-                x_now = 0
-            if ultra_mega_king_dragon_figure(x_now, y_now, my_table):
-                recursion(n+1, my_table, x_now, y_now, c, out)
-            x_now += 1
+output.close()
 
-    for e in matrix: # Начальная матрица
-        print(e)
+for e in matrix_to:
+    print(e)
 
-    recursion(0, matrix, 0, 0, int(lines[0][1]), output)
-
-    file.close() # Обязательно
-    output.close()
-if __name__ == "__main__":
-    main()
+end = time.time() - start
+print(end)
+# ура победа...
