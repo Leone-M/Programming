@@ -60,9 +60,7 @@ for e in figures:
 inpt.close()
 def rec(desk: list, figur_lst: list, n, x_now, y_now):
     if n == 0:
-        for e in figur_lst:
-            output.write(str(e) + " ")
-        output.write("\n")
+        print(*figur_lst, file=output)
         return
     new_figurs = list()
     i = y_now
@@ -94,17 +92,18 @@ def rec(desk: list, figur_lst: list, n, x_now, y_now):
     for e in new_figurs:
         rec(desk, figur_lst + [e], n - 1, e[0], e[1])
 
-rec(matrix, figures, c, 0, 0)
+rec(matrix, figures, c, -1, 0)
 output.close()
 output = open("output.txt", mode="r+", encoding="utf-8")
 
 lines = output.readlines()
 output.close()
+"""
 output = open("output.txt", mode="w+", encoding="utf-8")
 for i in range(len(lines)):
         lines[i] = lines[i][:-2]
         output.write(lines[i] + "\n")
-
+"""
 output = open("output.txt", mode="r+", encoding="utf-8")
 
 lines = output.readline().replace("(", "").replace(")", "").replace(",", "").split(" ") # считали строки
