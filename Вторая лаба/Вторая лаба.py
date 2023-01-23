@@ -1,8 +1,8 @@
 import copy
 import time
 
-start = time.time()
-
+output = open("output.txt", mode="w+", encoding="utf-8") # Глобальные переменные - файлы
+inpt = open("input.txt", mode="r+", encoding="utf-8")
 def ultra_mega_king_dragon_figure(x, y, desk):
     # добавляю по вертикали
     table = copy.deepcopy(desk)
@@ -37,27 +37,6 @@ def ultra_mega_king_dragon_figure(x, y, desk):
         table[y + 1][x + 1] = "*"
     table[y][x] = "#"
     return table
-
-"""for e in matrix:
-    print(e)"""
-
-output = open("output.txt", mode="w+", encoding="utf-8")
-inpt = open("input.txt", mode="r+", encoding="utf-8")
-
-lines = inpt.readlines() # считали строки
-lines = [e.strip("\n" ).split(" ") for e in lines] # Сформатировали строки
-
-figures = []
-s = int(lines[0][0]) # размечикс
-c = int(lines[0][1]) # скок надо поставить
-for e in lines[1:]:
-    figures.append((int(e[0]), int(e[1])))
-matrix = [["0" for _ in range(s)] for _ in range(s)]
-
-for e in figures:
-    matrix = ultra_mega_king_dragon_figure(e[0], e[1], matrix)
-
-inpt.close()
 def rec(desk: list, figur_lst: list, n, x_now, y_now):
     if n == 0:
         print(*figur_lst, file=output)
@@ -66,9 +45,9 @@ def rec(desk: list, figur_lst: list, n, x_now, y_now):
     i = y_now
     j = x_now
     while True:
-        if i == len(desk)-1 and j == len(desk)-1:
+        if i == len(desk) - 1 and j == len(desk) - 1:
             break
-        if j == len(desk)-1:
+        if j == len(desk) - 1:
             i += 1
             j = 0
         else:
@@ -91,34 +70,62 @@ def rec(desk: list, figur_lst: list, n, x_now, y_now):
 
     for e in new_figurs:
         rec(desk, figur_lst + [e], n - 1, e[0], e[1])
+def main(out = output):
+    start = time.time()
 
-rec(matrix, figures, c, -1, 0)
-output.close()
-output = open("output.txt", mode="r+", encoding="utf-8")
 
-lines = output.readlines()
-output.close()
-"""
-output = open("output.txt", mode="w+", encoding="utf-8")
-for i in range(len(lines)):
-        lines[i] = lines[i][:-2]
-        output.write(lines[i] + "\n")
-"""
-output = open("output.txt", mode="r+", encoding="utf-8")
+    """for e in matrix:
+        print(e)"""
 
-lines = output.readline().replace("(", "").replace(")", "").replace(",", "").split(" ") # считали строки
-#lines.pop(-1)
-print(lines)
+    lines = inpt.readlines() # считали строки
+    lines = [e.strip("\n" ).split(" ") for e in lines] # Сформатировали строки
 
-matrix_to = [["0" for _ in range(s)] for _ in range(s)]
-for i in range(0, len(lines), 2):
-    matrix_to = ultra_mega_king_dragon_figure(int(lines[i]), int(lines[i+1]), matrix_to)
+    figures = []
+    s = int(lines[0][0]) # размечикс
+    c = int(lines[0][1]) # скок надо поставить
+    for e in lines[1:]:
+        figures.append((int(e[0]), int(e[1])))
+    matrix = [["0" for _ in range(s)] for _ in range(s)]
 
-output.close()
+    for e in figures:
+        matrix = ultra_mega_king_dragon_figure(e[0], e[1], matrix)
 
-for e in matrix_to:
-    print(e)
+    inpt.close()
 
-end = time.time() - start
-print(end)
-# ура победа...
+    rec(matrix, figures, c, -1, 0)
+    out.close()
+    out = open("output.txt", mode="r+", encoding="utf-8")
+
+    lines = out.readlines()
+    if lines == []:
+        print("No solution", file=out)
+        out.close()
+    else:
+        out.close()
+        """
+            output = open("output.txt", mode="w+", encoding="utf-8")
+            for i in range(len(lines)):
+                lines[i] = lines[i][:-2]
+                output.write(lines[i] + "\n")
+        """
+        out = open("output.txt", mode="r+", encoding="utf-8")
+
+        lines = out.readline().replace("(", "").replace(")", "").replace(",", "").split(" ") # считали строки
+        #lines.pop(-1)
+        #print(lines)
+
+        matrix_to = [["0" for _ in range(s)] for _ in range(s)]
+        for i in range(0, len(lines), 2):
+            matrix_to = ultra_mega_king_dragon_figure(int(lines[i]), int(lines[i+1]), matrix_to)
+
+        out.close()
+
+        for e in matrix_to:
+            print(e)
+
+        end = time.time() - start
+        print(end)
+        # ура победа...
+
+if __name__ == "__main__":
+    main()
