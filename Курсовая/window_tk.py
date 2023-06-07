@@ -396,6 +396,9 @@ class Board:
         self.font = pygame.font.Font(None, size=60)
         no_solution = self.font.render("No solution", 1, "Red")
         self.screen.blit(no_solution, (260, 360))
+        output = open("output.txt", "w+", encoding="utf-8")
+        output.write("no solution")
+        output.close()
 
     def rec(self, desk: list, figur_lst: list, n, x_now, y_now, output):
         if n == 0:
