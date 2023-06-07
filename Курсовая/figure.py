@@ -9,11 +9,6 @@ class Figure:
     def place(self, x, y, table):
         ...
 
-    @abc.abstractmethod
-    def check_place_full(self, x, y, figr_lst) -> bool:
-        for e in figr_lst:
-            if (x == e[0] or y == e[1]) or (abs(x - e[0]) <= 1 and abs(y - e[1]) <= 1):
-                return False
 
 class King_Dragon(Figure):
     def check_place(self, x, y, table) -> bool:
