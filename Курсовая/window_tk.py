@@ -1,10 +1,6 @@
 import tkinter as tk
 import figure
 import pygame
-import algorithm
-
-output = open("output.txt", mode="w+", encoding="utf-8") # Глобальные переменные - файлы
-inpt = open("input.txt", mode="r+", encoding="utf-8")
 
 class Input_Data_window(tk.Tk):
     def __init__(self):
@@ -114,6 +110,8 @@ class Input_Data_window(tk.Tk):
 
 
 
+
+
 class Place_Figures_window(tk.Tk):
     def __init__(self, n, l, k):
         super(Place_Figures_window, self).__init__()
@@ -122,6 +120,7 @@ class Place_Figures_window(tk.Tk):
         self.n = n
         self.l = l
         self.k = k
+        self.fig = figure.King_Dragon()
 
         # Создаю Canvas чтобы можно было скроллить и фрейм в котором будут поля ввода
         self.canvas = tk.Canvas()
@@ -172,14 +171,31 @@ class Place_Figures_window(tk.Tk):
         return True
 
     def check_atck(self, coord: tuple[int], all_coords: list[tuple[int]], top_limit: int) -> bool:
-        fig = figure.King_Dragon()
 
         matrix = [["0" for _ in range(int(self.n))] for _ in range(int(self.n))]
-        fig = figure.King_Dragon()
+        self.fig = figure.King_Dragon()
         for i in range(top_limit):
-            matrix = fig.place(all_coords[i][0], all_coords[i][1], matrix)
+            matrix = self.fig.place(all_coords[i][0], all_coords[i][1], matrix)
 
         return figure.King_Dragon().check_place(coord[0], coord[1], matrix)
+
+    def setting_up(self, coords): # подготавливаю матрицу для отображения на доске в следующем окне и файлы для чтения
+        desk = [["0" for _ in range(self.n)] for _ in range(self.n)]
+        input = open("input.txt", "w+", encoding="utf-8")
+        print(type(coords[0]))
+
+        # записываем начальные данные n l k
+        input.write(f"{self.n} ")
+        input.write(f"{self.k} ")
+        input.write(f"{self.l}\n")
+
+        for c in coords: # записыванные координаты меняют матрицу через класс фигуры
+            desk = self.fig.place(int(c[0]), int(c[1]), desk)
+            for i in c: # попутно записываем координта в файл
+                input.write(str(i+1) + " ") # с+1 т.к. в программе индексы с 0, а в файле с 1
+            input.write("\n") # переводим каретку на след. строчку и там запишутся другие координаты
+        input.close()
+        return desk
 
     def open_next_window(self):
         entries = [entry.get() for entry in self.entries]
@@ -230,11 +246,15 @@ class Place_Figures_window(tk.Tk):
 
         if right and not_repeat:
             self.destroy()
-            Board(self.n, self.l, self.k, frmted_coords)
+            matrix_to_show = self.setting_up(frmted_coords) # мне возвращается матрица с расставленными фигурами
+            Board(self.n, self.l, self.k, matrix_to_show)
+
+
+
 
 
 class Board:
-    def __init__(self, n, l, k, figs):
+    def __init__(self, n, l, k, matrix):
         pygame.font.init()
         pygame.display.init()
         self.n = n
@@ -246,12 +266,15 @@ class Board:
         self.screen = pygame.display.set_mode(self.resolution)
         pygame.display.set_caption("Solution")
         self.clock = pygame.time.Clock()
-        self.matrix = algorithm.oop_algorithm(int(self.n), int(self.k), int(self.l), figs)
+        self.matrix = matrix
+        self.fig = figure.King_Dragon()
         self.font = pygame.font.Font(None, size=20)
 
 
         # главное не перебарщивать со скоростью
         self.clock.tick(60)
+        
+        self.matrix = self.solution("single_oop")
         if self.matrix != ["0_0"]:
             self.draw()
         else:
@@ -259,6 +282,69 @@ class Board:
 
 
         self.run()
+
+    def solution(self, method: str):
+        if method == "single_oop":
+            c = 0 # figures placed
+            i = 0 # y
+            j = 0 # x
+            while c < self.k: # так как ищем одно решние для отображения, можно пробежать циклом while
+                if self.fig.check_place(j, i, self.matrix):
+                    self.matrix = self.fig.place(j, i, self.matrix)
+                    c += 1
+                if i == self.n - 1 and j == self.n - 1:
+                    break
+                if j == self.n - 1:
+                    i += 1
+                    j = 0
+                else:
+                    j += 1
+            if c < self.k: return ["0_0"]
+            return self.matrix
+        elif method == "full_algorithm": # большая подготовка перед большой рекурсией
+            inpt = open("input.txt", "r+", encoding="utf-8")
+            out = open("output.txt", "w+", encoding="utf-8")
+            lines = inpt.readlines() # считали строки
+            lines = [e.strip("\n" ).split(" ") for e in lines] # Сформатировали строки
+
+            fig = figure.King_Dragon()
+
+            figures = []
+            s = int(lines[0][0]) # размечикс
+            c = int(lines[0][1]) # скок надо поставить
+            for e in lines[1:]:
+                figures.append((int(e[0]), int(e[1])))
+            matrix = [["0" for _ in range(s)] for _ in range(s)]
+
+            for e in figures:
+                matrix = fig.place(e[0], e[1], matrix)
+
+            inpt.close()
+
+            self.rec(matrix, figures, c, -1, 0, out)
+            out.close()
+            out = open("output.txt", mode="r+", encoding="utf-8")
+
+            lines = out.readlines()
+            if lines == []:
+                print("No solution", file=out)
+                out.close()
+            else:
+                out.close()
+                out = open("output.txt", mode="r+", encoding="utf-8")
+
+                lines = out.readline().replace("(", "").replace(")", "").replace(",", "").split(" ") # считали строки
+
+                matrix_to = [["0" for _ in range(s)] for _ in range(s)]
+                for i in range(0, len(lines), 2):
+                    matrix_to = fig.place(int(lines[i]), int(lines[i+1]), matrix_to)
+
+                out.close()
+
+                for e in matrix_to: # единичный вывод в консоль
+                    print(e)
+
+
 
     def run(self):
         run = True
@@ -271,7 +357,7 @@ class Board:
                     run = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if 600 <= mouse_pos[0] <= 600 + 100 and 733 <= mouse_pos[1] <= 733 + 20:
-                        algorithm.start_algorithm(output,inpt)
+                        self.solution(method="full_algorithm")
             pygame.display.flip()
 
     def draw(self):
@@ -311,6 +397,26 @@ class Board:
         no_solution = self.font.render("No solution", 1, "Red")
         self.screen.blit(no_solution, (260, 360))
 
-
-
-
+    def rec(self, desk: list, figur_lst: list, n, x_now, y_now, output):
+        if n == 0:
+            print(*figur_lst, file=output)
+            return
+        new_figurs = list()
+        i = y_now
+        j = x_now
+        while True:
+            if i == len(desk) - 1 and j == len(desk) - 1:
+                break
+            if j == len(desk) - 1:
+                i += 1
+                j = 0
+            else:
+                j += 1
+            ability = True
+            for e in figur_lst:
+                if (j == e[0] or i == e[1]) or (abs(j - e[0]) <= 1 and abs(i - e[1]) <= 1):
+                    ability = False
+            if ability:
+                new_figurs.append(tuple([j, i]))
+        for e in new_figurs:
+            self.rec(desk, figur_lst + [e], n - 1, e[0], e[1], output)
